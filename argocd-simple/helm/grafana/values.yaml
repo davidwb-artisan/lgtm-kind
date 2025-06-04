@@ -2,6 +2,30 @@ grafana:
   enabled: true
   adminPassword: admin
 
+  host: grafana.local.gd
+  http:
+    paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.local.gd
+    extraPaths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+
   sidecar:
     dashboards:
       enabled: true
