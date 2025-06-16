@@ -582,7 +582,10 @@ grafana:
                 notification_settings:
                   receiver: Alert Hook
 
-      contactpoints.yaml:
+    contactpoints.yaml:
+      secret:
+        apiVersion: 1
+        contactPoints:
           - orgId: 1  a
             name: Test Contact
             receivers:
