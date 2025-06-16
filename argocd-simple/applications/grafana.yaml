@@ -9,8 +9,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/fishst1k/lgtm-kind.git
-    targetRevision: master
+    repoURL: https://github.com/davidwb-artisan/lgtm-kind.git
+    targetRevision: alerts
     path: argocd-simple/helm/grafana
     helm:
       valueFiles:
