@@ -581,7 +581,7 @@ grafana:
                 isPaused: false
                 notification_settings:
                   receiver: Alert Hook
-
+    apiVersion: 1
     contactpoints.yaml:
         - orgId: 1
           name: Test Contact
