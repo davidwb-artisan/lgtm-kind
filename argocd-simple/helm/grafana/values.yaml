@@ -484,7 +484,7 @@ grafana:
                       conditions:
                           - evaluator:
                               params:
-                                  - 0
+                                  - 60
                               type: gt
                             operator:
                               type: and
@@ -565,13 +565,14 @@ grafana:
                   description: ""
                   runbook_url: ""
                   summary: |-
-                      {{`{{ if eq $labels.triggered_metric "1" }}`}}
-                                          "Disk usage exceeded critical threshold (>90%) on affected hosts"
-                                          {{`{{ else if eq $labels.triggered_metric "2" }}`}}
-                                          "CPU utilization exceeded critical threshold (>90%) on affected hosts"
-                                          {{`{{ else if eq $labels.triggered_metric "3" }}`}}
-                                          "Memory usage exceeded critical threshold (>90%) on affected hosts"
-                                          {{`{{ end }}`}}
+                      # {{`{{ if eq $labels.triggered_metric "1" }}`}}
+                      #                     "Disk usage exceeded critical threshold (>90%) on affected hosts"
+                      #                     {{`{{ else if eq $labels.triggered_metric "2" }}`}}
+                      #                     "CPU utilization exceeded critical threshold (>90%) on affected hosts"
+                      #                     {{`{{ else if eq $labels.triggered_metric "3" }}`}}
+                      #                     "Memory usage exceeded critical threshold (>90%) on affected hosts"
+                      #                     {{`{{ end }}`}}
+                      testing summary
                 labels:
                   "": ""
                   health_state: firing
