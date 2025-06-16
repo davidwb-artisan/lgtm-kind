@@ -484,7 +484,7 @@ grafana:
                       conditions:
                           - evaluator:
                               params:
-                                  - 60
+                                  - 20
                               type: gt
                             operator:
                               type: and
@@ -583,25 +583,11 @@ grafana:
                   receiver: Alert Hook
 
     contactpoints.yaml:
-      secret:
-        apiVersion: 1
-        contactPoints: 
-          - orgId: 1
-            name: Alert Hook
-            receivers:
-              - uid: aeouwx3q12hvld
-                type: webhook
-                settings:
-                  authorization_scheme: Bearer xxx
-                  httpMethod: POST
-                  message: |-
-                      {
-                        "status": "resolved",
-                        "severity": "WARNING",
-                        "details": "{\"key\": \"value\"}",
-                        "reported_by": "grafana",
-                        "subsystem": "hardware",
-                        "externalId": "19562932-0612-4505-72b6-00769c706d71"
-                      }
-                  url: http://edge-compute-api-edge-compute-api-1:8081/v1/org/1/cluster/lgtm-kind/issue
-                disableResolveMessage: false    
+      - orgId: 1
+        name: Test Contact
+        receivers:
+          - uid: eep5pp60s1ybkd
+            type: webhook
+            settings:
+              url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
+            disableResolveMessage: false
