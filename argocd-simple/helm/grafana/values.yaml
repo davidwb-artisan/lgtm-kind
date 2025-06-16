@@ -582,14 +582,14 @@ grafana:
                 notification_settings:
                   receiver: Test Contact
 
-    contactpoints.yaml:
-      apiVersion: 1
-      contactPoints:
-        - orgId: 1
-          name: Test Contact
-          receivers:
-            - uid: eep5pp60s1ybkd
-              type: webhook
-              settings:
-                url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
-              disableResolveMessage: false
+    # contactpoints.yaml:
+    #   apiVersion: 1
+    #   contactPoints:
+    #     - orgId: 1
+    #       name: Test Contact
+    #       receivers:
+    #         - uid: eep5pp60s1ybkd
+    #           type: webhook
+    #           settings:
+    #             url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
+    #           disableResolveMessage: false
