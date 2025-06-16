@@ -579,8 +579,8 @@ grafana:
                   severity: critical
                   team: sre_team_1
                 isPaused: false
-                notification_settings:
-                  receiver: Test Contact
+                # notification_settings:
+                #   receiver: Test Contact
 
     # contactpoints.yaml:
     #   apiVersion: 1
