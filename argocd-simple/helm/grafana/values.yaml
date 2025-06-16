@@ -580,7 +580,7 @@ grafana:
                   team: sre_team_1
                 isPaused: false
                 notification_settings:
-                  receiver: Alert Hook
+                  receiver: Test Contact
 
     contactpoints.yaml:
       apiVersion: 1
