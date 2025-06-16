@@ -3,36 +3,25 @@ grafana:
   adminPassword: admin
 
   host: grafana.local.gd
-  http:
-    paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 80
+  service:
+    port: 80
+    targetPort: 3000
+    portName: "grafana-local"
 
   ingress:
     enabled: true
     hosts:
       - grafana.local.gd
-    extraPaths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 80
 
   sidecar:
     dashboards:
       enabled: true
       searchNamespace: ALL
-    alerts:
-      enabled: true
-      searchNamespace: ALL
+    # alerts:
+    #   enabled: true
+    #   label: argocd.argoproj.io/instance
+    #   folder: /etc/grafana/provisioning/alerting
+    #   regex: "^grafana-alerts\\.yaml$" 
     datasources:
       enabled: true
       defaultDatasourceEnabled: true
@@ -112,3 +101,506 @@ grafana:
               tag: http.path
           secureJsonData:
             httpHeaderValue1: "lgtm-kind"
+
+  # extraVolumes:
+  #   - name: grafana-alerts
+  #     configMap:
+  #       name: grafana-alerts
+
+  nodeSelector:
+    ingress-ready: "true"  # ✅ Ensure your nodes can schedule the pod
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"  # ✅ Allows scheduling on control plane if needed
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # alerting:
+  #   rules.yaml:
+  #     apiVersion: 1
+  #     groups:
+  #       - orgId: 1
+  #         name: cluster-health
+  #         folder: system-observability
+  #         interval: 60s
+  #         rules:
+  #           - uid: cluster_critical_001
+  #             title: ClusterCritical
+  #             condition: C
+  #             data:
+  #               - refId: C
+  #                 datasourceUid: '__expr__'
+  #                 model:
+  #                   conditions:
+  #                     - evaluator:
+  #                         params:
+  #                           - 0
+  #                         type: gt
+  #                       operator:
+  #                         type: and
+  #                       query:
+  #                         params:
+  #                           - C
+  #                       reducer:
+  #                         type: last
+  #                       type: query
+  #                   datasource:
+  #                     type: __expr__
+  #                     uid: '__expr__'
+  #                   expression: >
+  #                     ( (reduce(container_fs_reads_bytes_total, "max") > 90) * 1 
+  #                     + (reduce(rate(container_cpu_usage_seconds_total[5m]), "max") > 90) * 2 
+  #                     + (reduce(container_memory_working_set_bytes / 1024^2, "max") > 90) * 3) > 0
+  #                   intervalMs: 1000
+  #                   maxDataPoints: 43200
+  #                   refId: C
+  #                   type: math
+  #             dashboardUid: cluster_health_dashboard
+  #             panelId: 101
+  #             noDataState: Alerting
+  #             execErrState: Error
+  #             for: "5m"
+  #             annotations:
+  #               description: Cluster is under significant resource stress!
+  #               triggered_cause: |
+  #                 {{`{{ if eq $labels.triggered_metric "1" }}`}}
+  #                 "Disk usage exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ else if eq $labels.triggered_metric "2" }}`}}
+  #                 "CPU utilization exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ else if eq $labels.triggered_metric "3" }}`}}
+  #                 "Memory usage exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ end }}`}}
+  #             labels:
+  #               severity: critical
+  #               health_state: firing
+  #               team: sre_team_1
+
+  #           - uid: cluster_warning_001
+  #             title: ClusterWarning
+  #             condition: W
+  #             data:
+  #               - refId: W
+  #                 datasourceUid: '__expr__'
+  #                 model:
+  #                   conditions:
+  #                     - evaluator:
+  #                         params:
+  #                           - 0
+  #                         type: gt
+  #                       operator:
+  #                         type: and
+  #                       query:
+  #                         params:
+  #                           - W
+  #                       reducer:
+  #                         type: last
+  #                       type: query
+  #                   datasource:
+  #                     type: __expr__
+  #                     uid: '__expr__'
+  #                   expression: >
+  #                     ( bool(reduce(container_fs_reads_bytes_total, "max") > 80)
+  #                     and bool(reduce(container_fs_reads_bytes_total, "max") <= 90) ) * 1
+  #                     + ( bool(reduce(rate(container_cpu_usage_seconds_total[5m]), "max") > 80)
+  #                     and bool(reduce(rate(container_cpu_usage_seconds_total[5m]), "max") <= 90) ) * 2
+  #                     + ( bool(reduce(container_memory_working_set_bytes / 1024^2, "max") > 80)
+  #                     and bool(reduce(container_memory_working_set_bytes / 1024^2, "max") <= 90) ) * 3
+  #                   intervalMs: 1000
+  #                   maxDataPoints: 43200
+  #                   refId: W
+
+      
+
+  ## Configure grafana alerting (can be templated)
+## ref: https://docs.grafana.com/alerting/set-up/provision-alerting-resources/file-provisioning/
+#
+  # alerting:
+  #   rules.yaml:
+  #     apiVersion: 1
+  #     groups:
+  #       - orgId: 1
+  #         name: cluster-health-test2
+  #         folder: system-observability
+  #         interval: 60s
+  #         rules:
+  #           - uid: cluster_critical_001
+  #             title: ClusterCritical
+  #             condition: C
+  #             data:
+  #               - refId: C
+  #                 datasourceUid: '__expr__'
+  #                 model:
+  #                   conditions:
+  #                     - evaluator:
+  #                         params:
+  #                           - 0
+  #                         type: gt
+  #                       operator:
+  #                         type: and
+  #                       query:
+  #                         params:
+  #                           - C
+  #                       reducer:
+  #                         type: last
+  #                       type: query
+  #                   datasource:
+  #                     type: __expr__
+  #                     uid: '__expr__'
+  #                   expression: >
+  #                     ( (max by (host) (host_filesystem_used_ratio * 100) > 90) * 1 
+  #                     + (max by (host) 
+  #                     (rate(host_cpu_seconds_total{mode!="idle"}[5m]) * 100) > 90) * 2 
+  #                     + (max by (host) 
+  #                     (host_memory_active_bytes / host_memory_available_bytes * 100) > 90) * 3) > 0
+  #                   intervalMs: 1000
+  #                   maxDataPoints: 43200
+  #                   refId: C
+  #                   type: math
+  #             dashboardUid: cluster_health_dashboard
+  #             panelId: 101
+  #             noDataState: Alerting
+  #             execErrState: Error
+  #             for: "5m"
+  #             annotations:
+  #               description: Cluster is under significant resource stress!
+  #               triggered_cause: >
+  #                 triggered_cause: |
+  #                   {{`{{ if eq $labels.triggered_metric "1" }}`}}
+  #                   "Disk usage exceeded critical threshold (>90%) on affected hosts"
+  #                   {{`{{ else if eq $labels.triggered_metric "2" }}`}}
+  #                   "CPU utilization exceeded critical threshold (>90%) on affected hosts"
+  #                   {{`{{ else if eq $labels.triggered_metric "3" }}`}}
+  #                   "Memory usage exceeded critical threshold (>90%) on affected hosts"
+  #                   {{`{{ end }}`}}
+
+  #             labels:
+  #               severity: critical
+  #               health_state: firing
+  #               team: sre_team_1
+
+  #           - uid: cluster_warning_001
+  #             title: ClusterWarning
+  #             condition: W
+  #             data:
+  #               - refId: W
+  #                 datasourceUid: '__expr__'
+  #                 model:
+  #                   conditions:
+  #                     - evaluator:
+  #                         params:
+  #                           - 0
+  #                         type: gt
+  #                       operator:
+  #                         type: and
+  #                       query:
+  #                         params:
+  #                           - W
+  #                       reducer:
+  #                         type: last
+  #                       type: query
+  #                   datasource:
+  #                     type: __expr__
+  #                     uid: '__expr__'
+  #                   expression: >
+  #                     ( bool(max by (host) (host_filesystem_used_ratio * 100) > 80)
+  #                     and bool(max by (host) (host_filesystem_used_ratio * 100) <= 90) ) * 1
+  #                     + ( bool(max by (host) 
+  #                     (rate(host_cpu_seconds_total{mode!="idle"}[5m]) * 100) > 80)
+  #                     and bool(max by (host) 
+  #                     (rate(host_cpu_seconds_total{mode!="idle"}[5m]) * 100) <= 90) ) * 2
+  #                     + ( bool(max by (host) 
+  #                     (host_memory_active_bytes / host_memory_available_bytes * 100) > 80)
+  #                     and bool(max by (host) 
+  #                     (host_memory_active_bytes / host_memory_available_bytes * 100) <= 90) ) * 3
+  #                   intervalMs: 1000
+  #                   maxDataPoints: 43200
+  #                   refId: W
+  #                   type: math
+  #             dashboardUid: cluster_health_dashboard
+  #             panelId: 102
+  #             noDataState: Alerting
+  #             execErrState: Error
+  #             for: "5m"
+  #             annotations:
+  #               description: Cluster is showing high resource utilization!
+  #               triggered_cause: |
+  #                 {{`{{ if eq $labels.triggered_metric "1" }}`}}
+  #                 "Disk usage exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ else if eq $labels.triggered_metric "2" }}`}}
+  #                 "CPU utilization exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ else if eq $labels.triggered_metric "3" }}`}}
+  #                 "Memory usage exceeded critical threshold (>90%) on affected hosts"
+  #                 {{`{{ end }}`}}
+
+  #             labels:
+  #               severity: warning
+  #               health_state: warning
+  #               team: sre_team_1
+
+  #           - uid: cluster_healthy_001
+  #             title: ClusterHealthy
+  #             condition: H
+  #             data:
+  #               - refId: H
+  #                 datasourceUid: '__expr__'
+  #                 model:
+  #                   conditions:
+  #                     - evaluator:
+  #                         params:
+  #                           - 0
+  #                         type: eq
+  #                       operator:
+  #                         type: and
+  #                       query:
+  #                         params:
+  #                           - H
+  #                       reducer:
+  #                         type: count
+  #                       type: query
+  #                   datasource:
+  #                     type: '__expr__'
+  #                     uid: '__expr__'
+  #                   expression: 'count(ALERTS{alertstate="firing"}) == 0'
+  #                   intervalMs: 1000
+  #                   maxDataPoints: 43200
+  #                   refId: H
+  #                   type: math
+  #             dashboardUid: cluster_health_dashboard
+  #             panelId: 103
+  #             noDataState: OK
+  #             execErrState: OK
+  #             for: "5m"
+  #             annotations:
+  #               description: Cluster is running smoothly with no active alerts.
+  #             labels:
+  #               severity: none
+  #               health_state: healthy
+  #               team: sre_team_1
+  alerting:
+    rules.yaml:
+      apiVersion: 1
+      groups:
+          - orgId: 1
+            name: Cluster-Health2
+            folder: system-observability
+            interval: 1m
+            rules:
+              - uid: ceouy3ihgc6ioc
+                title: ClusterCritical2
+                condition: C
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: lgtm-mimir
+                    model:
+                      disableTextWrap: false
+                      editorMode: builder
+                      expr: max(container_fs_reads_bytes_total{cluster="lgtm-kind"})
+                      fullMetaSearch: false
+                      includeNullMetadata: true
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: A
+                      useBackend: false
+                  - refId: B
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: lgtm-mimir
+                    model:
+                      datasource:
+                          type: prometheus
+                          uid: lgtm-mimir
+                      disableTextWrap: false
+                      editorMode: builder
+                      expr: max(container_cpu_usage_seconds_total{cluster="lgtm-kind"})
+                      fullMetaSearch: false
+                      includeNullMetadata: true
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: B
+                      useBackend: false
+                  - refId: E
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: lgtm-mimir
+                    model:
+                      datasource:
+                          type: prometheus
+                          uid: lgtm-mimir
+                      disableTextWrap: false
+                      editorMode: builder
+                      expr: max(container_memory_working_set_bytes{cluster="lgtm-kind"} / 1024 ^ 2)
+                      fullMetaSearch: false
+                      includeNullMetadata: true
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: E
+                      useBackend: false
+                  - refId: F
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: lgtm-mimir
+                    model:
+                      datasource:
+                          type: prometheus
+                          uid: lgtm-mimir
+                      disableTextWrap: false
+                      editorMode: builder
+                      expr: kube_pod_status_reason == Terminating
+                      fullMetaSearch: false
+                      includeNullMetadata: true
+                      instant: true
+                      intervalMs: 1000
+                      legendFormat: __auto
+                      maxDataPoints: 43200
+                      range: false
+                      refId: F
+                      useBackend: false
+                  - refId: C
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params:
+                                  - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                  - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                      datasource:
+                          type: __expr__
+                          uid: __expr__
+                      expression: A
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: C
+                      type: threshold
+                  - refId: D
+                    relativeTimeRange:
+                      from: 600
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params:
+                                  - 90
+                                  - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
+                      datasource:
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                      expression: B
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: D
+                      type: threshold
+                  - refId: G
+                    datasourceUid: __expr__
+                    model:
+                      conditions:
+                          - evaluator:
+                              params:
+                                  - 90
+                                  - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
+                      datasource:
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                      expression: E
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                      refId: G
+                      type: threshold
+                noDataState: NoData
+                execErrState: Error
+                for: 1m
+                annotations:
+                  description: ""
+                  runbook_url: ""
+                  summary: |-
+                      {{`{{ if eq $labels.triggered_metric "1" }}`}}
+                                          "Disk usage exceeded critical threshold (>90%) on affected hosts"
+                                          {{`{{ else if eq $labels.triggered_metric "2" }}`}}
+                                          "CPU utilization exceeded critical threshold (>90%) on affected hosts"
+                                          {{`{{ else if eq $labels.triggered_metric "3" }}`}}
+                                          "Memory usage exceeded critical threshold (>90%) on affected hosts"
+                                          {{`{{ end }}`}}
+                labels:
+                  "": ""
+                  health_state: firing
+                  severity: critical
+                  team: sre_team_1
+                isPaused: false
+                notification_settings:
+                  receiver: Alert Hook
+
+    contactpoints.yaml:
+      secret:
+        apiVersion: 1
+        contactPoints: 
+          - orgId: 1
+            name: Alert Hook
+            receivers:
+              - uid: aeouwx3q12hvld
+                type: webhook
+                settings:
+                  authorization_scheme: Bearer xxx
+                  httpMethod: POST
+                  message: |-
+                      {
+                        "status": "resolved",
+                        "severity": "WARNING",
+                        "details": "{\"key\": \"value\"}",
+                        "reported_by": "grafana",
+                        "subsystem": "hardware",
+                        "externalId": "19562932-0612-4505-72b6-00769c706d71"
+                      }
+                  url: http://edge-compute-api-edge-compute-api-1:8081/v1/org/1/cluster/lgtm-kind/issue
+                disableResolveMessage: false    
