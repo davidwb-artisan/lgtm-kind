@@ -586,8 +586,8 @@ grafana:
               settings:
                 url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
                 httpMethod: POST
-                customHeaders: {}
-                customPayload: |
+                summary: |
+                  testing summary!!!!!!!!
                   {
                     "severity": "{{`{{ .CommonLabels.severity }}`}}",
                     "status": "{{`{{ .Status }}`}}",
