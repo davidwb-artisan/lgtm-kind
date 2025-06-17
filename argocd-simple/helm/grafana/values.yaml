@@ -600,7 +600,5 @@ grafana:
           name: alert_template
           template: |
             {{ define "alert_template" }}
-            testing123
+            {{ testing123 }}
             {{ end }}
-        
-
