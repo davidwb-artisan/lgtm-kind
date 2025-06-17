@@ -589,11 +589,12 @@ grafana:
                 customHeaders: {}
                 customPayload: |
                   {
-                    "severity": "{{ .CommonLabels.severity }}",
-                    "status": "{{ .Status }}",
+                    "severity": "{{`{{ .CommonLabels.severity }}`}}",
+                    "status": "{{`{{ .Status }}`}}",
                     "reported_by": "grafana",
-                    "subsystem": "{{ .CommonLabels.datasource_uid }}",
-                    "details": "{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}"
+                    "subsystem": "{{`{{ .CommonLabels.datasource_uid }}`}}",
+                    "details": "{{`{{ with index .Alerts 0 }}`}}{{`{{ .Annotations.summary }}`}}{{`{{ end }}`}}"
                   }
+
               disableResolveMessage: false
 
