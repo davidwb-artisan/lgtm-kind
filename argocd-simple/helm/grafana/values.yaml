@@ -586,29 +586,23 @@ grafana:
               settings:
                 url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
                 httpMethod: POST
-                message: |-
-                  {{ define "custom_message" -}}
-                  {{ if .CommonLabels }}
-                  Alerts have common labels
-                  {{ else }}
-                  There are no common labels
-                  {{ end }}
-                  {{ end }}
+                customHeaders: {}
+                template: alert_template                 
               disableResolveMessage: false
 
-    # templates.yaml:
-    #   apiVersion: 1
-    #   templates:
-    #     - orgId: 1
-    #       name: alert_template
-    #       template: |
-    #         {{ `
-    #           {{ define "alert_template" }}
-    #             "severity": "{{ .CommonLabels.severity }}",
-    #               "status": "{{ .Status }}",
-    #               "reported_by": "grafana",
-    #               "subsystem": "{{ .CommonLabels.datasource_uid }}",
-    #               "details": "{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}"
-    #           {{ end }}
-    #         ` }}         
+    templates.yaml:
+      apiVersion: 1
+      templates:
+        - orgId: 1
+          name: alert_template
+          template: |
+            {{ `
+            {{ define "alert_template" }}
+                "severity": "{{ .CommonLabels.severity }}",
+                  "status": "{{ .Status }}",
+                  "reported_by": "grafana",
+                  "subsystem": "{{ .CommonLabels.datasource_uid }}",
+                  "details": "{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}"
+            {{ end }}
+            ` }}         
 
