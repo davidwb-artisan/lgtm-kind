@@ -600,6 +600,6 @@ grafana:
           name: alert_template
           template: |
             {{ `
-            testing124
+            "testing124"
             ` }}         
 
