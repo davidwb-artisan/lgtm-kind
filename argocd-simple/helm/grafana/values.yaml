@@ -600,12 +600,6 @@ grafana:
           name: alert_template
           template: |
             {{ `
-            {{ define "alert_template" }}
-                "severity": "{{ .CommonLabels.severity }}",
-                  "status": "{{ .Status }}",
-                  "reported_by": "grafana",
-                  "subsystem": "{{ .CommonLabels.datasource_uid }}",
-                  "details": "{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}"
-            {{ end }}
+            testing124
             ` }}         
 
