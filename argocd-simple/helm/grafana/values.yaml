@@ -571,6 +571,10 @@ grafana:
                   health_state: firing
                   severity: critical
                   team: sre_team_1
+                  status: '{{`{{ .Status }}`}}'
+                  reported_by: grafana
+                  subsystem: '{{`{{ .CommonLabels.datasource_uid }}`}}'
+                  details: '{{`{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}`}}'
                 isPaused: false
                 notification_settings:
                   receiver: Test Contact
