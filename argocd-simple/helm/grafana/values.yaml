@@ -599,7 +599,8 @@ grafana:
         - orgId: 1
           name: alert_template
           template: |
-            {{ `
-            "testing124"
-            ` }}         
+            {{ define "alert_template" }}
+            testing123
+            {{ end }}
+        
 
