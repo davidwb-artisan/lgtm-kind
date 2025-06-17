@@ -586,14 +586,14 @@ grafana:
               settings:
                 url: https://webhook.site/32285334-7656-4194-832d-7040803ed937
                 httpMethod: POST
-                summary: |
-                  {{ `
-                    "severity": "{{ .CommonLabels.severity }}",
-                    "status": "{{ .Status }}",
-                    "reported_by": "grafana",
-                    "subsystem": "{{ .CommonLabels.datasource_uid }}",
-                    "details": "{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}"
-                  ` }}     
+                message: |-
+                  {{ define "custom_message" -}}
+                  {{ if .CommonLabels }}
+                  Alerts have common labels
+                  {{ else }}
+                  There are no common labels
+                  {{ end }}
+                  {{ end }}
               disableResolveMessage: false
 
     # templates.yaml:
