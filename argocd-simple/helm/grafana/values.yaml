@@ -600,7 +600,7 @@ grafana:
           name: alert_template
           template: |
             {{ `
-            {{ define "my_first_template" }}
+            {{ define "alert_template" }}
             Custom notification message
             {{ end }}
             ` }}
