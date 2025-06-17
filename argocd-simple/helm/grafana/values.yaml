@@ -600,5 +600,11 @@ grafana:
           name: alert_template
           template: |
             {{ define "alert_template" }}
-            testing123
+            {{- if eq $labels.instance "prod-server-1" -}}
+            production
+            {{- else if eq $labels.instance "staging-server-1" -}}
+            staging
+            {{- else -}}
+            development
+            {{- end -}}
             {{ end }}
