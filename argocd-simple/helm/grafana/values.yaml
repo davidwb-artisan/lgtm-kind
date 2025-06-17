@@ -565,7 +565,7 @@ grafana:
                   description: ""
                   runbook_url: ""
                   summary: |-
-                      testing summary
+                      CPU usage for {{ $labels.instance }} has exceeded 80% ({{ $values.A.Value }}) for the last 5 minutes.
                 labels:
                   "": ""
                   health_state: firing
