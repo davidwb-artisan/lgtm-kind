@@ -599,11 +599,8 @@ grafana:
         - orgId: 1
           name: alert_template
           template: |
-            {{ define "alert_template" }}
-            {{- if eq $labels.health_state "firing" -}}
-            firing
-            staging
-            {{- else -}}
-            not firing
-            {{- end -}}
+            {{ `
+            {{ define "my_first_template" }}
+            Custom notification message
             {{ end }}
+            ` }}
