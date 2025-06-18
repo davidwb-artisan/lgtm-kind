@@ -386,12 +386,12 @@ grafana:
       apiVersion: 1
       groups:
           - orgId: 1
-            name: Cluster-Health2
+            name: Cluster-Health
             folder: system-observability
             interval: 1m
             rules:
-              - uid: ceouy3ihgc6ioc
-                title: ClusterCritical2
+              - uid: eepapp6ldo4xsc
+                title: Disk Space Usage
                 condition: C
                 data:
                   - refId: A
@@ -400,81 +400,14 @@ grafana:
                       to: 0
                     datasourceUid: lgtm-mimir
                     model:
-                      disableTextWrap: false
-                      editorMode: builder
-                      expr: max(container_fs_reads_bytes_total{cluster="lgtm-kind"})
-                      fullMetaSearch: false
-                      includeNullMetadata: true
+                      editorMode: code
+                      expr: (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100
                       instant: true
                       intervalMs: 1000
                       legendFormat: __auto
                       maxDataPoints: 43200
                       range: false
                       refId: A
-                      useBackend: false
-                  - refId: B
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: lgtm-mimir
-                    model:
-                      datasource:
-                          type: prometheus
-                          uid: lgtm-mimir
-                      disableTextWrap: false
-                      editorMode: builder
-                      expr: max(container_cpu_usage_seconds_total{cluster="lgtm-kind"})
-                      fullMetaSearch: false
-                      includeNullMetadata: true
-                      instant: true
-                      intervalMs: 1000
-                      legendFormat: __auto
-                      maxDataPoints: 43200
-                      range: false
-                      refId: B
-                      useBackend: false
-                  - refId: E
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: lgtm-mimir
-                    model:
-                      datasource:
-                          type: prometheus
-                          uid: lgtm-mimir
-                      disableTextWrap: false
-                      editorMode: builder
-                      expr: max(container_memory_working_set_bytes{cluster="lgtm-kind"} / 1024 ^ 2)
-                      fullMetaSearch: false
-                      includeNullMetadata: true
-                      instant: true
-                      intervalMs: 1000
-                      legendFormat: __auto
-                      maxDataPoints: 43200
-                      range: false
-                      refId: E
-                      useBackend: false
-                  - refId: F
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: lgtm-mimir
-                    model:
-                      datasource:
-                          type: prometheus
-                          uid: lgtm-mimir
-                      disableTextWrap: false
-                      editorMode: builder
-                      expr: kube_pod_status_reason == Terminating
-                      fullMetaSearch: false
-                      includeNullMetadata: true
-                      instant: true
-                      intervalMs: 1000
-                      legendFormat: __auto
-                      maxDataPoints: 43200
-                      range: false
-                      refId: F
-                      useBackend: false
                   - refId: C
                     relativeTimeRange:
                       from: 600
@@ -484,7 +417,7 @@ grafana:
                       conditions:
                           - evaluator:
                               params:
-                                  - 20
+                                  - 90
                               type: gt
                             operator:
                               type: and
@@ -503,81 +436,213 @@ grafana:
                       maxDataPoints: 43200
                       refId: C
                       type: threshold
-                  - refId: D
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: __expr__
-                    model:
-                      conditions:
-                          - evaluator:
-                              params:
-                                  - 90
-                                  - 0
-                              type: gt
-                            operator:
-                              type: and
-                            query:
-                              params: []
-                            reducer:
-                              params: []
-                              type: avg
-                            type: query
-                      datasource:
-                          name: Expression
-                          type: __expr__
-                          uid: __expr__
-                      expression: B
-                      intervalMs: 1000
-                      maxDataPoints: 43200
-                      refId: D
-                      type: threshold
-                  - refId: G
-                    datasourceUid: __expr__
-                    model:
-                      conditions:
-                          - evaluator:
-                              params:
-                                  - 90
-                                  - 0
-                              type: gt
-                            operator:
-                              type: and
-                            query:
-                              params: []
-                            reducer:
-                              params: []
-                              type: avg
-                            type: query
-                      datasource:
-                          name: Expression
-                          type: __expr__
-                          uid: __expr__
-                      expression: E
-                      intervalMs: 1000
-                      maxDataPoints: 43200
-                      refId: G
-                      type: threshold
                 noDataState: NoData
                 execErrState: Error
                 for: 1m
                 annotations:
                   description: ""
                   runbook_url: ""
-                  summary: |-
-                      CPU usage for {{ $labels.instance }} has exceeded 80% ({{ $values.A.Value }}) for the last 5 minutes.
+                  summary: ""
                 labels:
                   "": ""
-                  health_state: firing
-                  severity: critical
-                  team: sre_team_1
-                  status: '{{`{{ .Status }}`}}'
-                  reported_by: grafana
-                  subsystem: '{{`{{ .CommonLabels.datasource_uid }}`}}'
-                  details: '{{`{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}`}}'
                 isPaused: false
                 notification_settings:
                   receiver: Test Contact
+
+      # groups:
+      #     - orgId: 1
+      #       name: Cluster-Health2
+      #       folder: system-observability
+      #       interval: 1m
+      #       rules:
+      #         - uid: ceouy3ihgc6ioc
+      #           title: ClusterCritical2
+      #           condition: C
+      #           data:
+      #             - refId: A
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: lgtm-mimir
+      #               model:
+      #                 disableTextWrap: false
+      #                 editorMode: builder
+      #                 expr: max(container_fs_reads_bytes_total{cluster="lgtm-kind"})
+      #                 fullMetaSearch: false
+      #                 includeNullMetadata: true
+      #                 instant: true
+      #                 intervalMs: 1000
+      #                 legendFormat: __auto
+      #                 maxDataPoints: 43200
+      #                 range: false
+      #                 refId: A
+      #                 useBackend: false
+      #             - refId: B
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: lgtm-mimir
+      #               model:
+      #                 datasource:
+      #                     type: prometheus
+      #                     uid: lgtm-mimir
+      #                 disableTextWrap: false
+      #                 editorMode: builder
+      #                 expr: max(container_cpu_usage_seconds_total{cluster="lgtm-kind"})
+      #                 fullMetaSearch: false
+      #                 includeNullMetadata: true
+      #                 instant: true
+      #                 intervalMs: 1000
+      #                 legendFormat: __auto
+      #                 maxDataPoints: 43200
+      #                 range: false
+      #                 refId: B
+      #                 useBackend: false
+      #             - refId: E
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: lgtm-mimir
+      #               model:
+      #                 datasource:
+      #                     type: prometheus
+      #                     uid: lgtm-mimir
+      #                 disableTextWrap: false
+      #                 editorMode: builder
+      #                 expr: max(container_memory_working_set_bytes{cluster="lgtm-kind"} / 1024 ^ 2)
+      #                 fullMetaSearch: false
+      #                 includeNullMetadata: true
+      #                 instant: true
+      #                 intervalMs: 1000
+      #                 legendFormat: __auto
+      #                 maxDataPoints: 43200
+      #                 range: false
+      #                 refId: E
+      #                 useBackend: false
+      #             - refId: F
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: lgtm-mimir
+      #               model:
+      #                 datasource:
+      #                     type: prometheus
+      #                     uid: lgtm-mimir
+      #                 disableTextWrap: false
+      #                 editorMode: builder
+      #                 expr: kube_pod_status_reason == Terminating
+      #                 fullMetaSearch: false
+      #                 includeNullMetadata: true
+      #                 instant: true
+      #                 intervalMs: 1000
+      #                 legendFormat: __auto
+      #                 maxDataPoints: 43200
+      #                 range: false
+      #                 refId: F
+      #                 useBackend: false
+      #             - refId: C
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: __expr__
+      #               model:
+      #                 conditions:
+      #                     - evaluator:
+      #                         params:
+      #                             - 20
+      #                         type: gt
+      #                       operator:
+      #                         type: and
+      #                       query:
+      #                         params:
+      #                             - C
+      #                       reducer:
+      #                         params: []
+      #                         type: last
+      #                       type: query
+      #                 datasource:
+      #                     type: __expr__
+      #                     uid: __expr__
+      #                 expression: A
+      #                 intervalMs: 1000
+      #                 maxDataPoints: 43200
+      #                 refId: C
+      #                 type: threshold
+      #             - refId: D
+      #               relativeTimeRange:
+      #                 from: 600
+      #                 to: 0
+      #               datasourceUid: __expr__
+      #               model:
+      #                 conditions:
+      #                     - evaluator:
+      #                         params:
+      #                             - 90
+      #                             - 0
+      #                         type: gt
+      #                       operator:
+      #                         type: and
+      #                       query:
+      #                         params: []
+      #                       reducer:
+      #                         params: []
+      #                         type: avg
+      #                       type: query
+      #                 datasource:
+      #                     name: Expression
+      #                     type: __expr__
+      #                     uid: __expr__
+      #                 expression: B
+      #                 intervalMs: 1000
+      #                 maxDataPoints: 43200
+      #                 refId: D
+      #                 type: threshold
+      #             - refId: G
+      #               datasourceUid: __expr__
+      #               model:
+      #                 conditions:
+      #                     - evaluator:
+      #                         params:
+      #                             - 90
+      #                             - 0
+      #                         type: gt
+      #                       operator:
+      #                         type: and
+      #                       query:
+      #                         params: []
+      #                       reducer:
+      #                         params: []
+      #                         type: avg
+      #                       type: query
+      #                 datasource:
+      #                     name: Expression
+      #                     type: __expr__
+      #                     uid: __expr__
+      #                 expression: E
+      #                 intervalMs: 1000
+      #                 maxDataPoints: 43200
+      #                 refId: G
+      #                 type: threshold
+      #           noDataState: NoData
+      #           execErrState: Error
+      #           for: 1m
+      #           annotations:
+      #             description: ""
+      #             runbook_url: ""
+      #             summary: |-
+      #                 CPU usage for {{ $labels.instance }} has exceeded 80% ({{ $values.A.Value }}) for the last 5 minutes.
+      #           labels:
+      #             "": ""
+      #             health_state: firing
+      #             severity: critical
+      #             team: sre_team_1
+      #             status: '{{`{{ .Status }}`}}'
+      #             reported_by: grafana
+      #             subsystem: '{{`{{ .CommonLabels.datasource_uid }}`}}'
+      #             details: '{{`{{ with index .Alerts 0 }}{{ .Annotations.summary }}{{ end }}`}}'
+      #           isPaused: false
+      #           notification_settings:
+      #             receiver: Test Contact
 
     contactpoints.yaml:
       apiVersion: 1
@@ -593,15 +658,3 @@ grafana:
                 customHeaders: {}
                 template: alert_template
               disableResolveMessage: false
-
-    templates.yaml:
-      apiVersion: 1
-      templates:
-        - orgId: 1
-          name: alert_template
-          template: |
-            {{ `
-            {{ define "alert_template" }}
-            Custom notification message
-            {{ end }}
-            ` }}
