@@ -157,7 +157,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 90
-                              type: gt
+                                  - 100
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -216,7 +217,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 90
-                              type: gt
+                                  - 100
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -275,7 +277,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 90
-                              type: gt
+                                  - 100
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -333,7 +336,7 @@ grafana:
                       conditions:
                           - evaluator:
                               params:
-                                  - 90
+                                  - 0
                               type: gt
                             operator:
                               type: and
@@ -393,35 +396,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 80
-                              type: gt
-                            operator:
-                              type: and
-                            query:
-                              params:
-                                  - C
-                            reducer:
-                              params: []
-                              type: last
-                            type: query
-                      datasource:
-                          type: __expr__
-                          uid: __expr__
-                      expression: A
-                      intervalMs: 1000
-                      maxDataPoints: 43200
-                      refId: C
-                      type: threshold
-                  - refId: B
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: __expr__
-                    model:
-                      conditions:
-                          - evaluator:
-                              params:
                                   - 91
-                              type: lt
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -439,7 +415,7 @@ grafana:
                       maxDataPoints: 43200
                       refId: C
                       type: threshold
-
+                  
                 noDataState: NoData
                 execErrState: Error
                 for: 1m
@@ -481,7 +457,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 80
-                              type: gt
+                                  - 91
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -499,34 +476,7 @@ grafana:
                       maxDataPoints: 43200
                       refId: C
                       type: threshold
-                  - refId: C
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: __expr__
-                    model:
-                      conditions:
-                          - evaluator:
-                              params:
-                                  - 91
-                              type: lt
-                            operator:
-                              type: and
-                            query:
-                              params:
-                                  - C
-                            reducer:
-                              params: []
-                              type: last
-                            type: query
-                      datasource:
-                          type: __expr__
-                          uid: __expr__
-                      expression: A
-                      intervalMs: 1000
-                      maxDataPoints: 43200
-                      refId: C
-                      type: threshold   
+                  
                 noDataState: NoData
                 execErrState: Error
                 for: 1m
@@ -568,7 +518,8 @@ grafana:
                           - evaluator:
                               params:
                                   - 80
-                              type: gt
+                                  - 91
+                              type: within_range
                             operator:
                               type: and
                             query:
@@ -586,34 +537,7 @@ grafana:
                       maxDataPoints: 43200
                       refId: C
                       type: threshold
-                  - refId: C
-                    relativeTimeRange:
-                      from: 600
-                      to: 0
-                    datasourceUid: __expr__
-                    model:
-                      conditions:
-                          - evaluator:
-                              params:
-                                  - 91
-                              type: lt
-                            operator:
-                              type: and
-                            query:
-                              params:
-                                  - C
-                            reducer:
-                              params: []
-                              type: last
-                            type: query
-                      datasource:
-                          type: __expr__
-                          uid: __expr__
-                      expression: A
-                      intervalMs: 1000
-                      maxDataPoints: 43200
-                      refId: C
-                      type: threshold    
+                  
                 noDataState: NoData
                 execErrState: Error
                 for: 1m
